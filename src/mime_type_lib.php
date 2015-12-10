@@ -1,6 +1,18 @@
 <?php
 
 if (!function_exists('get_file_mime_type')) {
+    /**
+     * Detects a mime type based on simple path parsing.
+     * Will use the php fileinfo module if it's available so you can use it
+     * transparently in any environment.
+     * If $debug is true, will return an array with the resulting type
+     * and the method used to find the type.
+     *
+     * @param string $filename Path to the file
+     * @param bool $debug
+     *
+     * @return array|string
+     */
     function get_file_mime_type($filename, $debug = false)
     {
         if (function_exists('finfo_open') && function_exists('finfo_file') && function_exists('finfo_close')) {
@@ -10,7 +22,10 @@ if (!function_exists('get_file_mime_type')) {
 
             if (!empty($mime_type)) {
                 if (true === $debug) {
-                    return ['mime_type' => $mime_type, 'method' => 'fileinfo'];
+                    return [
+                        'mime_type' => $mime_type,
+                        'method'    => 'fileinfo'
+                    ];
                 }
 
                 return $mime_type;
@@ -21,7 +36,10 @@ if (!function_exists('get_file_mime_type')) {
 
             if (!empty($mime_type)) {
                 if (true === $debug) {
-                    return ['mime_type' => $mime_type, 'method' => 'mime_content_type'];
+                    return [
+                        'mime_type' => $mime_type,
+                        'method'    => 'mime_content_type'
+                    ];
                 }
 
                 return $mime_type;
@@ -218,19 +236,25 @@ if (!function_exists('get_file_mime_type')) {
             'xyz'     => 'chemical/x-xyz',
             'zip'     => 'application/zip'
         ];
-        $poped = explode('.', $filename);
-        $ext = strtolower(array_pop($poped));
+        $popped = explode('.', $filename);
+        $ext = strtolower(array_pop($popped));
 
         if (!empty($mime_types[$ext])) {
             if (true === $debug) {
-                return ['mime_type' => $mime_types[$ext], 'method' => 'from_array'];
+                return [
+                    'mime_type' => $mime_types[$ext],
+                    'method'    => 'from_array'
+                ];
             }
 
             return $mime_types[$ext];
         }
 
         if (true === $debug) {
-            return ['mime_type' => 'application/octet-stream', 'method' => 'last_resort'];
+            return [
+                'mime_type' => 'application/octet-stream',
+                'method'    => 'last_resort'
+            ];
         }
 
         return 'application/octet-stream';
